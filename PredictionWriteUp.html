@@ -122,7 +122,7 @@ rfModel &lt;- randomForest(classe ~ ., data=parTrain, importance=TRUE, ntrees=10
 predictTrain &lt;- predict(rfModel, parTrain)</code></pre>
 <pre class="r"><code># Confusion Matrix
 #confusionMatrix(predictTrain2, parTrain$classe)
-confusionMatrix(predictTrain, parTrain$classe)</code></pre>
+print(confusionMatrix(predictTrain, parTrain$classe))</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
@@ -160,7 +160,7 @@ confusionMatrix(predictTrain, parTrain$classe)</code></pre>
 <pre class="r"><code># Prediction
 predictTestCV &lt;- predict(rfModel, parTest)</code></pre>
 <pre class="r"><code># Confusion Matrix
-confusionMatrix(predictTestCV, parTest$classe)</code></pre>
+print(confusionMatrix(predictTestCV, parTest$classe))</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
@@ -198,7 +198,7 @@ confusionMatrix(predictTestCV, parTest$classe)</code></pre>
 <h2>Using the Random Forest model on the Train Data Set</h2>
 <pre class="r"><code># Test Data Set Prediction
 predictTest &lt;- predict(rfModel, pmlTest)
-predictTest</code></pre>
+print(predictTest)</code></pre>
 <pre><code>##  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
 ##  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
 ## Levels: A B C D E</code></pre>

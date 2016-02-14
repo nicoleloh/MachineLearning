@@ -83,7 +83,7 @@ predictTrain <- predict(rfModel, parTrain)
 ```{r}
 # Confusion Matrix
 #confusionMatrix(predictTrain2, parTrain$classe)
-confusionMatrix(predictTrain, parTrain$classe)
+print(confusionMatrix(predictTrain, parTrain$classe))
 ```
 
 ## Cross Validation
@@ -94,7 +94,7 @@ predictTestCV <- predict(rfModel, parTest)
 
 ```{r}
 # Confusion Matrix
-confusionMatrix(predictTestCV, parTest$classe)
+print(confusionMatrix(predictTestCV, parTest$classe))
 ```
 
 <br/>
@@ -107,5 +107,5 @@ The out-of-sample error is estimated to be 0.005, or 0.5%.
 ```{r}
 # Test Data Set Prediction
 predictTest <- predict(rfModel, pmlTest)
-predictTest
+print(predictTest)
 ```
