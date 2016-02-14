@@ -1,0 +1,108 @@
+
+# Exercise Prediction Report
+
+## Executive Summary
+One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. The objective of this project is to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants to predict the manner in which they did the exercise. This is the "classe" variable in the training set. 
+
+## Background
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount 
+of data about personal activity relatively inexpensively. These type of devices are part of the quantified 
+self movement - a group of enthusiasts who take measurements about themselves regularly to improve their 
+health, to find patterns in their behavior, or because they are tech geeks. They were asked to perform 
+barbell lifts correctly and incorrectly in 5 different ways. 
+More information is available from the website here: http://groupware.les.inf.puc-rio.br/har 
+
+
+## Data Source
+### The training data are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+### The test data are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+## Data Processing
+```{r}
+# Read Training Data set and replace "#DIV/0!" and missing value with "NA"
+pmlTrain <- read.csv("./data/pml-training.csv", na.strings=c("#DIV/0!"))
+```
+
+```{r}
+# Read Testing Data set and replace "#DIV/0!" and missing value with "NA"
+pmlTest <- read.csv("./data/pml-testing.csv", , na.strings=c("#DIV/0!"))
+```
+
+```{r}
+# Remove the first 7 irrelevant variables: X, user_name, raw_timestamp_part_1, raw_timestamp_part_,2 cvtd_timestamp, new_window, and  num_window
+pmlTrain <- pmlTrain[, -c(1:7)]
+pmlTest <- pmlTest[, -c(1:7)]
+```
+
+
+```{r}
+# Remove columns with missing values
+pmlTrain <- pmlTrain[, colSums(is.na(pmlTrain)) == 0]
+pmlTest <- pmlTest[, colSums(is.na(pmlTest)) == 0]
+```
+
+```{r}
+# Remove near zero variance predictors
+library(lattice)
+library(ggplot2)
+library(caret)
+nzvData <- nearZeroVar(pmlTrain)
+pmlTrain <- pmlTrain[, -nzvData]
+```
+
+## Partitioning the Training Data Set for cross validation
+```{r}
+# The training data set will be partionned to this ratio: 75%-Training, 25%-Test
+set.seed(250)
+trainData <- createDataPartition(pmlTrain$classe, p=0.75, list=FALSE)
+parTrain <- pmlTrain[trainData, ]
+parTest <- pmlTrain[-trainData, ]
+```
+
+
+## Train Model
+```{r}
+suppressPackageStartupMessages(library(randomForest))
+library(rpart)
+# Models
+#rpModel <- rpart(classe ~ ., data=parTrain)
+rfModel <- randomForest(classe ~ ., data=parTrain, importance=TRUE, ntrees=10)
+```
+
+```{r}
+# Prediction
+#predictTrain1 <- predict(rpModel, parTrain, type = "class")
+predictTrain <- predict(rfModel, parTrain)
+```
+
+```{r}
+# Confusion Matrix
+#confusionMatrix(predictTrain2, parTrain$classe)
+print(confusionMatrix(predictTrain, parTrain$classe))
+```
+
+## Cross Validation
+```{r}
+# Prediction
+predictTestCV <- predict(rfModel, parTest)
+```
+
+```{r}
+# Confusion Matrix
+print(confusionMatrix(predictTestCV, parTest$classe))
+```
+
+The accuracy of Random Forest model is 0.9947 and the Decision Tree model is 0.7428 (results not shown).
+It indicates that the Random Forest is a better model compared to Decision Tree. 
+The out-of-sample error is estimated to be 0.005, or 0.5%.
+ 
+
+## Using the Random Forest model on the Train Data Set
+```{r}
+# Test Data Set Prediction
+predictTest <- predict(rfModel, pmlTest)
+print(predictTest)
+```
